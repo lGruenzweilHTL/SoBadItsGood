@@ -69,7 +69,8 @@ public class SongEditor : MonoBehaviour {
         int octave = pitch / 12;
         if (pitch < 0 && noteValue != Note.C) octave--;
         
-        SongNote note = audioManager.GetNoteAsReference(index);
+        // Get a reference to the note at the calculated index
+        ref SongNote note = ref audioManager.GetNoteAsReference(index);
         note.Note = noteValue;
         note.Octave = octave;
         
