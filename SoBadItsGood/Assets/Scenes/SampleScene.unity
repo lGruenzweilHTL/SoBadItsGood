@@ -239,7 +239,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioManager: {fileID: 1682858113}
-  noteSliderPrefab: {fileID: 764179993148664597, guid: e166b9cb15c5e034196405def6e7cd24, type: 3}
+  noteSliderPrefab: {fileID: 331659102416413753, guid: e166b9cb15c5e034196405def6e7cd24, type: 3}
   noteRowPrefab: {fileID: 6928690111877519991, guid: ebb57c0ed3fae4948a12b7bc55cf48b3, type: 3}
   sliderParent: {fileID: 413332630}
 --- !u!1 &413332629
