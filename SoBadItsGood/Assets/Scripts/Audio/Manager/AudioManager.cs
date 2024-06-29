@@ -49,6 +49,8 @@ public class AudioManager : MonoBehaviour {
         return ref _notes[index];
     }
 
+    [ContextMenu("Play Current Song")]
+    private void PlayCurrentSong() => StartCoroutine(PlaySong());
     private IEnumerator PlaySong() {
         foreach (var songNote in _notes) {
             notePlayer.PlaySound(songNote.Note, songNote.Octave);
