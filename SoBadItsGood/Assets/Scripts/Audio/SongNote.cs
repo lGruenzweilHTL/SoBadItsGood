@@ -1,5 +1,7 @@
-public struct SongNote {
+[System.Serializable]
+public struct SongNote
+{
     public Note Note;
     public int Octave;
-    public int NoteLengthMultiplier;
+    [UnityEngine.Tooltip("Example: A quarter note has 4")] public int NoteLengthMultiplier;
 }
