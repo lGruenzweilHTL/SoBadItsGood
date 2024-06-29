@@ -1,7 +1,6 @@
-using System;
-using System.Collections;
 using UnityEngine;
 
+// ReSharper disable once CheckNamespace
 [RequireComponent(typeof(AudioSource))]
 public class NotePlayer : MonoBehaviour {
     private AudioSource _src;
@@ -16,15 +15,15 @@ public class NotePlayer : MonoBehaviour {
     /// <param name="note">The note to play</param>
     /// <param name="octave">The octave to raise it (base is middle c)</param>
     private static int NoteToPitch(Note note, int octave) {
-        int octaveSemitones = octave * 12;
+        var octaveSemitones = octave * 12;
 
         // Formula for raising middle c by any amount of semitones: scale^semitones where scale is the 12th root of 2
-        float pitch = Mathf.Pow(1.0594630943592952645618252949463f, octaveSemitones + (int)note);
+        var pitch = Mathf.Pow(1.0594630943592952645618252949463f, octaveSemitones + (int)note);
 
         return (int)pitch;
     }
-    
-    public void PlaySound(Note note, int octave, float duration) {
+
+    public void PlaySound(Note note, int octave) {
         int pitch = NoteToPitch(note, octave);
         _src.pitch = pitch;
         _src.Play();

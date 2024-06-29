@@ -1,3 +1,4 @@
+// ReSharper disable once CheckNamespace
 public enum Note {
     C = 0,
     CSharp = 1,
