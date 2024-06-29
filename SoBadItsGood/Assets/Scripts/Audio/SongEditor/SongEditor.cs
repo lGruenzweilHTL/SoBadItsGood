@@ -1,11 +1,13 @@
 using System;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class SongEditor : MonoBehaviour {
     [Serializable]
-    private struct NoteSlider {
-        public Slider slider;
+    private struct NoteSliderObject {
+        public NoteSlider noteSlider;
         public int rowIndex;
         public int noteIndex;
     }
@@ -17,11 +19,9 @@ public class SongEditor : MonoBehaviour {
     private static readonly (Note note, int octave) HighestNote = (Note.C, 2);
 
     [SerializeField] private AudioManager audioManager;
-    [Space, SerializeField] private Slider noteSliderPrefab;
+    [Space, SerializeField] private NoteSlider noteSliderPrefab;
     [SerializeField] private Transform noteRowPrefab;
     [SerializeField] private Transform sliderParent;
-
-    private SongNote[] _notes = new SongNote[NUM_ROWS * NOTES_PER_ROW];
 
     private void Start() => InitializeRows();
 
@@ -33,13 +33,13 @@ public class SongEditor : MonoBehaviour {
             // Instantiate sliders for each note in the row
             for (int j = 0; j < NOTES_PER_ROW; j++) {
                 // Initialize the slider
-                NoteSlider note = new() {
-                    slider = Instantiate(noteSliderPrefab, row),
+                NoteSliderObject note = new() {
+                    noteSlider = Instantiate(noteSliderPrefab, row),
                     rowIndex = i,
                     noteIndex = j
                 };
-                note.slider.onValueChanged.AddListener(pitch => OnPitchChanged((int)pitch, note.rowIndex, note.noteIndex));
-                InitializeSlider(note.slider);
+                note.noteSlider.slider.onValueChanged.AddListener(pitch => OnPitchChanged((int)pitch, note.rowIndex, note.noteIndex, note.noteSlider.noteText));
+                InitializeSlider(note.noteSlider.slider);
             }
         }
     }
@@ -60,7 +60,8 @@ public class SongEditor : MonoBehaviour {
     /// <param name="pitch">The new pitch of the note</param>
     /// <param name="rowIndex">The row the slider is on</param>
     /// <param name="noteIndex">The slider's index inside the row</param>
-    private void OnPitchChanged(int pitch, int rowIndex, int noteIndex) {
+    /// <param name="noteText">The text to display the current note</param>
+    private void OnPitchChanged(int pitch, int rowIndex, int noteIndex, TMP_Text noteText) {
         // Pitch = octave * 12 + noteValue
         
         int index = rowIndex * NOTES_PER_ROW + noteIndex; // Calculate the index in the notes array
@@ -73,6 +74,9 @@ public class SongEditor : MonoBehaviour {
         ref SongNote note = ref audioManager.GetNoteAsReference(index);
         note.Note = noteValue;
         note.Octave = octave;
+        
+        string noteString = noteValue.ToString().Replace("Sharp", "#");
+        noteText.text = $"{noteString}<size=50%>{octave+4}";
         
         print($"Note at index {index} is now {noteValue} at octave {octave}");
     }
