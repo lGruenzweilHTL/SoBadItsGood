@@ -29,11 +29,16 @@ public class AudioManager : MonoBehaviour {
     [SerializeField] 
     [Tooltip("Reference to a NotePlayer script")]
     private NotePlayer notePlayer;
+    
+    
+    private WaitForSeconds _wait;
 
 
     private SongNote[] _notes = Array.Empty<SongNote>();
 
     private void Initialize() {
+        _wait = new WaitForSeconds(beatLength / defaultNoteLengthMultiplier);
+        
         Array.Resize(ref _notes, noteAmount);
         
         for (var i = 0; i < _notes.Length; i++) {
@@ -50,11 +55,12 @@ public class AudioManager : MonoBehaviour {
     }
 
     [ContextMenu("Play Current Song")]
-    private void PlayCurrentSong() => StartCoroutine(PlaySong());
-    private IEnumerator PlaySong() {
+    private void PlayCurrentSong() => PlaySong();
+    private async void PlaySong() {
         foreach (var songNote in _notes) {
             notePlayer.PlaySound(songNote.Note, songNote.Octave);
-            yield return new WaitForSeconds(beatLength / songNote.NoteLengthMultiplier);
+            
+            await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(beatLength / songNote.NoteLengthMultiplier));
         }
     }
     

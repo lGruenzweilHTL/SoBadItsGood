@@ -512,10 +512,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ff7e605ec67af648a837360284a1e48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  noteAmount: 100
-  defaultNote: 4
-  defaultOctave: 2
-  defaultNoteLengthMultiplier: 4
+  noteAmount: 10
+  defaultNote: 0
+  defaultOctave: 0
+  defaultNoteLengthMultiplier: 8
   beatLength: 4
   notePlayer: {fileID: 1682858114}
 --- !u!114 &1682858114
@@ -541,7 +541,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: d415189c19a16c84fb66f2ca7173d099, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
