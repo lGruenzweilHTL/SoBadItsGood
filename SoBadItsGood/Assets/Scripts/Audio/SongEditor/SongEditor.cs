@@ -12,8 +12,8 @@ public class SongEditor : MonoBehaviour {
         public int noteIndex;
     }
 
-    private const int NUM_ROWS = 2;
-    private const int NOTES_PER_ROW = 5;
+    [SerializeField] private int numRows = 2;
+    [SerializeField] private int notesPerRow = 5;
     
     private static readonly (Note note, int octave) LowestNote = (Note.C, -1);
     private static readonly (Note note, int octave) HighestNote = (Note.C, 2);
@@ -25,13 +25,14 @@ public class SongEditor : MonoBehaviour {
 
     private void Start() => InitializeRows();
 
+    [ContextMenu("Regenerate Rows")]
     private void InitializeRows() {
         // Instantiate all note rows and sliders for each row
-        for (int i = 0; i < NUM_ROWS; i++) {
+        for (int i = 0; i < numRows; i++) {
             // Instantiate a row
             Transform row = Instantiate(noteRowPrefab, sliderParent);
             // Instantiate sliders for each note in the row
-            for (int j = 0; j < NOTES_PER_ROW; j++) {
+            for (int j = 0; j < notesPerRow; j++) {
                 // Initialize the slider
                 NoteSliderObject note = new() {
                     noteSlider = Instantiate(noteSliderPrefab, row),
@@ -64,7 +65,7 @@ public class SongEditor : MonoBehaviour {
     private void OnPitchChanged(int pitch, int rowIndex, int noteIndex, TMP_Text noteText) {
         // Pitch = octave * 12 + noteValue
         
-        int index = rowIndex * NOTES_PER_ROW + noteIndex; // Calculate the index in the notes array
+        int index = rowIndex * notesPerRow + noteIndex; // Calculate the index in the notes array
         Note noteValue = (Note)((pitch + 12) % 12); // Reverse-engineer the note value
         
         int octave = pitch / 12;
