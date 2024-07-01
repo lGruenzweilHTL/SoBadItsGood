@@ -1,7 +1,6 @@
 using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class SongEditor : MonoBehaviour {
@@ -14,16 +13,38 @@ public class SongEditor : MonoBehaviour {
 
     [SerializeField] private int numRows = 2;
     [SerializeField] private int notesPerRow = 5;
-    
+
     private static readonly (Note note, int octave) LowestNote = (Note.C, -1);
     private static readonly (Note note, int octave) HighestNote = (Note.C, 2);
 
-    [SerializeField] private AudioManager audioManager;
     [Space, SerializeField] private NoteSlider noteSliderPrefab;
     [SerializeField] private Transform noteRowPrefab;
     [SerializeField] private Transform sliderParent;
 
-    private void Start() => InitializeRows();
+    private SongNote[] _notes = { };
+
+    public static Action OnOpenedAnyEditor;
+    public static Action OnClosedAnyEditor;
+
+    private void Start() {
+        Debug.Log("Initializing...", gameObject);
+        _notes = new SongNote[numRows * notesPerRow];
+        InitializeRows();
+    }
+
+    public void OpenEditor() {
+        sliderParent.gameObject.SetActive(true);
+        OnOpenedAnyEditor?.Invoke();
+    }
+
+    private void CloseEditor() {
+        sliderParent.gameObject.SetActive(false);
+        OnClosedAnyEditor?.Invoke();
+    }
+
+    private void Update() {
+        if (sliderParent.gameObject.activeSelf && Input.GetKeyDown(KeyCode.Escape)) CloseEditor();
+    }
 
     [ContextMenu("Regenerate Rows")]
     private void InitializeRows() {
@@ -64,21 +85,21 @@ public class SongEditor : MonoBehaviour {
     /// <param name="noteText">The text to display the current note</param>
     private void OnPitchChanged(int pitch, int rowIndex, int noteIndex, TMP_Text noteText) {
         // Pitch = octave * 12 + noteValue
-        
+
         int index = rowIndex * notesPerRow + noteIndex; // Calculate the index in the notes array
         Note noteValue = (Note)((pitch + 12) % 12); // Reverse-engineer the note value
-        
+
         int octave = pitch / 12;
         if (pitch < 0 && noteValue != Note.C) octave--;
-        
+
         // Get a reference to the note at the calculated index
-        ref SongNote note = ref audioManager.GetNoteAsReference(index);
+        ref SongNote note = ref _notes[index];
         note.Note = noteValue;
         note.Octave = octave;
-        
+
         string noteString = noteValue.ToString().Replace("Sharp", "#");
-        noteText.text = $"{noteString}<size=50%>{octave+4}";
-        
+        noteText.text = $"{noteString}<size=50%>{octave + 4}";
+
         print($"Note at index {index} is now {noteValue} at octave {octave}");
     }
 }
