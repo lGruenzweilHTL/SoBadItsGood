@@ -57,7 +57,7 @@ public class AudioManager : MonoBehaviour {
     private void PlayCurrentSong() => PlaySong();
     private async void PlaySong() {
         foreach (var songNote in _notes) {
-            notePlayer.PlaySound(songNote.note, songNote.octave);
+            notePlayer.PlaySound(songNote.note, null, songNote.octave);
             
             await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(beatLength / songNote.noteLengthMultiplier));
         }

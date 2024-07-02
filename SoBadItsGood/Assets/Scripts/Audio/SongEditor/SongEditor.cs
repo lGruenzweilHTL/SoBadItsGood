@@ -31,6 +31,7 @@ public class SongEditor : MonoBehaviour {
 
     private SongNote[] _notes = { };
     private AudioClip _middleC;
+    private float _volume = 1f;
 
     public static Action OnOpenedAnyEditor;
     public static Action OnClosedAnyEditor;
@@ -115,7 +116,7 @@ public class SongEditor : MonoBehaviour {
     
     public async void PlaySong(CancellationToken token) {
         foreach (SongNote songNote in _notes) {
-            notePlayer.PlaySound(_middleC, songNote.note, songNote.octave);
+            notePlayer.PlaySound(songNote.note, _middleC, songNote.octave, _volume);
             
             // ReSharper disable once MethodSupportsCancellation
             // Reason to not pass CancellationToken: If passed and cancelled, the method will throw an OperationCancelledException
@@ -131,4 +132,5 @@ public class SongEditor : MonoBehaviour {
             _ => throw new ArgumentOutOfRangeException(nameof(newType), newType, null)
         };
     }
+    public void SetVolume(float newVolume) => _volume = newVolume;
 }

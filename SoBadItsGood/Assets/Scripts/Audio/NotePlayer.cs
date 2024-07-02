@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using UnityEngine;
 
 // ReSharper disable once CheckNamespace
@@ -23,15 +24,10 @@ public class NotePlayer : MonoBehaviour {
         return pitch;
     }
 
-    public void PlaySound(Note note, int octave) {
-        float pitch = NoteToPitch(note, octave);
-        
-        _src.pitch = pitch;
-        _src.Play();
-    }
-
-    public void PlaySound(AudioClip middleCNote, Note note, int octave) {
+    public void PlaySound(Note note, [CanBeNull] AudioClip middleCNote = null, int octave = 0, float volume = 1f) {
         _src.clip = middleCNote;
-        PlaySound(note, octave);
+        _src.volume = volume;
+        _src.pitch = NoteToPitch(note, octave);
+        _src.Play();
     }
 }
