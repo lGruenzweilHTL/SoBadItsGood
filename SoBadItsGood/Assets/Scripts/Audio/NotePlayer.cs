@@ -29,4 +29,9 @@ public class NotePlayer : MonoBehaviour {
         _src.pitch = pitch;
         _src.Play();
     }
+
+    public void PlaySound(AudioClip middleCNote, Note note, int octave) {
+        _src.clip = middleCNote;
+        PlaySound(note, octave);
+    }
 }

@@ -42,9 +42,9 @@ public class AudioManager : MonoBehaviour {
         
         for (var i = 0; i < _notes.Length; i++) {
             _notes[i] = new SongNote {
-                Note = defaultNote,
-                Octave = defaultOctave,
-                NoteLengthMultiplier = defaultNoteLengthMultiplier
+                note = defaultNote,
+                octave = defaultOctave,
+                noteLengthMultiplier = defaultNoteLengthMultiplier
             };
         }
     }
@@ -57,9 +57,9 @@ public class AudioManager : MonoBehaviour {
     private void PlayCurrentSong() => PlaySong();
     private async void PlaySong() {
         foreach (var songNote in _notes) {
-            notePlayer.PlaySound(songNote.Note, songNote.Octave);
+            notePlayer.PlaySound(songNote.note, songNote.octave);
             
-            await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(beatLength / songNote.NoteLengthMultiplier));
+            await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(beatLength / songNote.noteLengthMultiplier));
         }
     }
     

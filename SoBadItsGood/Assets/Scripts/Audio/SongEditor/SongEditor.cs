@@ -16,16 +16,21 @@ public class SongEditor : MonoBehaviour {
     [SerializeField] private int numRows = 2;
     [SerializeField] private int notesPerRow = 5;
     [Space, SerializeField] private float beatLength = 0.5f;
-
+    
     private static readonly (Note note, int octave) LowestNote = (Note.C, -1);
     private static readonly (Note note, int octave) HighestNote = (Note.C, 2);
 
+    [Space, SerializeField] private GameObject background;
     [Space, SerializeField] private NotePlayer notePlayer;
     [Space, SerializeField] private NoteSlider noteSliderPrefab;
     [SerializeField] private Transform noteRowPrefab;
     [SerializeField] private Transform sliderParent;
 
+    [Header("Notes")] [SerializeField] private AudioClip middleCPiano;
+    [SerializeField] private AudioClip middleCGuitar;
+
     private SongNote[] _notes = { };
+    private AudioClip _middleC;
 
     public static Action OnOpenedAnyEditor;
     public static Action OnClosedAnyEditor;
@@ -33,16 +38,17 @@ public class SongEditor : MonoBehaviour {
     private void Start() {
         Debug.Log("Initializing...", gameObject);
         _notes = new SongNote[numRows * notesPerRow];
+        _middleC = middleCPiano;
         InitializeRows();
     }
 
     public void OpenEditor() {
-        sliderParent.gameObject.SetActive(true);
+        background.SetActive(true);
         OnOpenedAnyEditor?.Invoke();
     }
 
     private void CloseEditor() {
-        sliderParent.gameObject.SetActive(false);
+        background.SetActive(false);
         OnClosedAnyEditor?.Invoke();
     }
 
@@ -98,8 +104,8 @@ public class SongEditor : MonoBehaviour {
 
         // Get a reference to the note at the calculated index
         ref SongNote note = ref _notes[index];
-        note.Note = noteValue;
-        note.Octave = octave;
+        note.note = noteValue;
+        note.octave = octave;
 
         string noteString = noteValue.ToString().Replace("Sharp", "#");
         noteText.text = $"{noteString}<size=50%>{octave + 4}";
@@ -109,12 +115,20 @@ public class SongEditor : MonoBehaviour {
     
     public async void PlaySong(CancellationToken token) {
         foreach (SongNote songNote in _notes) {
-            notePlayer.PlaySound(songNote.Note, songNote.Octave);
+            notePlayer.PlaySound(_middleC, songNote.note, songNote.octave);
             
             // ReSharper disable once MethodSupportsCancellation
             // Reason to not pass CancellationToken: If passed and cancelled, the method will throw an OperationCancelledException
             await Task.Delay(TimeSpan.FromSeconds(beatLength));
             if (token.IsCancellationRequested) break;
         }
+    }
+
+    public void SetMusicianType(int newType) {
+        _middleC = (MusicianType)newType switch {
+            MusicianType.Pianist => middleCPiano,
+            MusicianType.Guitarist => middleCGuitar,
+            _ => throw new ArgumentOutOfRangeException(nameof(newType), newType, null)
+        };
     }
 }
