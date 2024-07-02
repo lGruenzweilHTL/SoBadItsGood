@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,10 +15,12 @@ public class SongEditor : MonoBehaviour {
 
     [SerializeField] private int numRows = 2;
     [SerializeField] private int notesPerRow = 5;
+    [Space, SerializeField] private float beatLength = 0.5f;
 
     private static readonly (Note note, int octave) LowestNote = (Note.C, -1);
     private static readonly (Note note, int octave) HighestNote = (Note.C, 2);
 
+    [Space, SerializeField] private NotePlayer notePlayer;
     [Space, SerializeField] private NoteSlider noteSliderPrefab;
     [SerializeField] private Transform noteRowPrefab;
     [SerializeField] private Transform sliderParent;
@@ -101,5 +105,16 @@ public class SongEditor : MonoBehaviour {
         noteText.text = $"{noteString}<size=50%>{octave + 4}";
 
         print($"Note at index {index} is now {noteValue} at octave {octave}");
+    }
+    
+    public async void PlaySong(CancellationToken token) {
+        foreach (SongNote songNote in _notes) {
+            notePlayer.PlaySound(songNote.Note, songNote.Octave);
+            
+            // ReSharper disable once MethodSupportsCancellation
+            // Reason to not pass CancellationToken: If passed and cancelled, the method will throw an OperationCancelledException
+            await Task.Delay(TimeSpan.FromSeconds(beatLength));
+            if (token.IsCancellationRequested) break;
+        }
     }
 }
